@@ -19,7 +19,7 @@ class CreateUsersTable1 extends Migration {
                 $t->timestamps();
         });
           Schema::create('user_details', function($t) {
-                $t->integer('user_id')->unsigned();
+                $t->increments('user_id')->unsigned();
                 $t->foreign('user_id')->references('id')->on('users');
                 $t->string('email', 64);
                 $t->string('name', 64);
@@ -47,8 +47,7 @@ class CreateUsersTable1 extends Migration {
 	 */
 	public function down()
 	{
-		// Schema::drop('user_groups');
-		// Schema::drop('user_details');
+		Schema::drop('user_details');
 		Schema::drop('user_groups');
 		Schema::drop('users');
 		Schema::drop('groups');

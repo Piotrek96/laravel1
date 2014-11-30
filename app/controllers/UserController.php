@@ -10,9 +10,9 @@ class UserController extends \BaseController {
 	 */
 	public function index()
 	{
-		$user = User::with(['details', 'group'])->find(1);
-		// dd($user->toArray());
-		return View::make('index')->with('user',$user);
+		$users = User::with(['details', 'group'])->get();
+		// dd($users->toArray());
+		return View::make('index')->with('users',$users);
 	}
 
 	/**
@@ -32,15 +32,56 @@ class UserController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function store()
-	{	
-			$return = "Username is avaible";
-		if(User::where('username','=',Input::get('username') )->exists())
+	private function vaildateUser()
+	{
+		$rules=['username'=>[
+					'required',
+					'unique:users,username',
+					'Min:10',
+					'Max:30'],
+				'email'=>[
+				'email']
+					];
+		$validator = Validator::make(Input::all(), $rules);
+		if ($validator->fails())
 		{
-			$return = "Username is unavaible";
+			return [
+        	'success' => false,
+        	'errors' => $validator->getMessageBag()->toArray()
+		    ];
+
 		}
-		
-		return $return;
+		return ['success' =>true];
+	}
+	public function avaibility()
+	{	
+		$vaildate=$this->vaildateUser(Input::all());
+		if(!$vaildate['success'])
+		{
+   			 return Response::json($vaildate); 
+		}
+		return Response::json($vaildate);
+	}
+
+	public function store()
+	{
+		$vaildate=$this->vaildateUser(Input::all());
+		if($vaildate['success'])
+		{	
+			$user = new User;
+			$user->username= Input::get('username');
+			$user->password= Hash::make(Input::get('password'));
+			$user->save();
+			$userdetails = new User_details;
+			$userdetails->email=Input::get('email');
+			$user->details()->save($userdetails);
+			return Response::json(['Konto zostalo założone']); 
+		}
+		return Response::json($vaildate);
+	}
+	public function form($action)
+	{
+		return View::make($action.'_form');
 	}
 
 	/**

@@ -13,4 +13,6 @@
 
 Route::get('/','UserController@index');
 Route::get('/create', 'UserController@create');
+Route::any('/avaibility', 'UserController@avaibility');
 Route::any('/store', 'UserController@store');
+Route::any('/form/{action}', 'UserController@form');
