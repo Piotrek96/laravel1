@@ -79,6 +79,14 @@ class UserController extends \BaseController {
 		}
 		return Response::json($vaildate);
 	}
+
+	public function addGroup()
+	{
+		$user= User::find(1);
+		$user->group()->attach(1);
+		return "Dodaje grupe";
+	}
+
 	public function form($action)
 	{
 		return View::make($action.'_form');

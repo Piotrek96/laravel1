@@ -16,3 +16,4 @@ Route::get('/create', 'UserController@create');
 Route::any('/avaibility', 'UserController@avaibility');
 Route::any('/store', 'UserController@store');
 Route::any('/form/{action}', 'UserController@form');
+Route::any('/addGroup', 'UserController@addGroup');

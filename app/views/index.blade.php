@@ -25,12 +25,14 @@ Create user
 	<th>Username</th>
 	<th>Email</th>
 	<th></th>
+	<th></th>
 </tr>
 @foreach ($users as $user) 
 <tr>
 	<td>{{$user->username}}</td>
 	<td>{{isset($user->details->email) ?  $user->details->email : " " }}</td>
 	<td>{{HTML::link('/edit','edytuj')}}</td>
+	<td>{{HTML::link('/addGroup','Zarządzaj Grupami')}}</td>
 </tr>
 
 @endforeach
@@ -38,8 +40,7 @@ Create user
 </div>
 <script type="text/javascript">
 $("#openModalCreateUser").click(function(){
-
-$.post('form/create', function(data) { 
+	$.post('form/create', function(data) { 
    	$("#formcontent").html(data);
 });
 });
