@@ -1446,7 +1446,16 @@ class Request
     }
     public function get($key, $default = null, $deep = false)
     {
-        return $this->query->get($key, $this->attributes->get($key, $this->request->get($key, $default, $deep), $deep), $deep);
+        if ($this !== ($result = $this->query->get($key, $this, $deep))) {
+            return $result;
+        }
+        if ($this !== ($result = $this->attributes->get($key, $this, $deep))) {
+            return $result;
+        }
+        if ($this !== ($result = $this->request->get($key, $this, $deep))) {
+            return $result;
+        }
+        return $default;
     }
     public function getSession()
     {
@@ -2830,7 +2839,7 @@ class ExceptionHandler
                 }
             } catch (\Exception $e) {
                 if ($this->debug) {
-                    $title = sprintf('Exception thrown when handling an exception (%s: %s)', get_class($exception), $exception->getMessage());
+                    $title = sprintf('Exception thrown when handling an exception (%s: %s)', get_class($e), $e->getMessage());
                 } else {
                     $title = 'Whoops, looks like something went wrong.';
                 }
@@ -10963,10 +10972,12 @@ class StackedHttpKernel implements HttpKernelInterface, TerminableInterface
     }
     public function terminate(Request $request, Response $response)
     {
+        $prevKernel = null;
         foreach ($this->middlewares as $kernel) {
-            if ($kernel instanceof TerminableInterface) {
+            if (!$prevKernel instanceof TerminableInterface && $kernel instanceof TerminableInterface) {
                 $kernel->terminate($request, $response);
             }
+            $prevKernel = $kernel;
         }
     }
 }

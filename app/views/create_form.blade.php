@@ -61,6 +61,7 @@ event.preventDefault();
      }, function(data) {
       console.log(data);
      })
-location.reload();
+setTimeout(function(){
+  location.reload()}, 1500);
 })
 </script>
